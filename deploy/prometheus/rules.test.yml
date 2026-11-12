@@ -1,0 +1,24 @@
+rule_files: [rules.yml]
+evaluation_interval: 1m
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{service="checkout",outcome="error"}'
+        values: '0+20x360'
+      - series: 'http_requests_total{service="checkout",outcome="success"}'
+        values: '0+980x360'
+      - series: 'http_requests_total{service="catalog",outcome="error"}'
+        values: '0+1x360'
+      - series: 'http_requests_total{service="catalog",outcome="success"}'
+        values: '0+999x360'
+    alert_rule_test:
+      - eval_time: 6h
+        alertname: RequestBudgetFastBurn
+        exp_alerts:
+          - exp_labels: {service: checkout, severity: page}
+            exp_annotations: {summary: Request error budget is burning quickly}
+      - eval_time: 6h
+        alertname: RequestBudgetSlowBurn
+        exp_alerts:
+          - exp_labels: {service: checkout, severity: ticket}
+            exp_annotations: {summary: Sustained request error budget burn}

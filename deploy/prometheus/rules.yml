@@ -1,0 +1,29 @@
+groups:
+  - name: request-slo
+    rules:
+      - alert: RequestBudgetFastBurn
+        expr: |
+          (
+            sum by (service) (rate(http_requests_total{outcome="error"}[5m]))
+            / sum by (service) (rate(http_requests_total[5m])) / 0.001 >= 14.4
+          )
+          and
+          (
+            sum by (service) (rate(http_requests_total{outcome="error"}[1h]))
+            / sum by (service) (rate(http_requests_total[1h])) / 0.001 >= 14.4
+          )
+        labels: {severity: page}
+        annotations: {summary: Request error budget is burning quickly}
+      - alert: RequestBudgetSlowBurn
+        expr: |
+          (
+            sum by (service) (rate(http_requests_total{outcome="error"}[30m]))
+            / sum by (service) (rate(http_requests_total[30m])) / 0.001 >= 6
+          )
+          and
+          (
+            sum by (service) (rate(http_requests_total{outcome="error"}[6h]))
+            / sum by (service) (rate(http_requests_total[6h])) / 0.001 >= 6
+          )
+        labels: {severity: ticket}
+        annotations: {summary: Sustained request error budget burn}
