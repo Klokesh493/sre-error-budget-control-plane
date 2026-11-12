@@ -32,6 +32,7 @@ make verify
 python3 budget.py examples/healthy.json
 python3 budget.py examples/incident.json
 make verify-rules  # requires promtool
+make verify-routing  # requires alertmanager
 ```
 
 ## Deployment
@@ -40,7 +41,7 @@ Load [the rules file](deploy/prometheus/rules.yml) through the Prometheus `rule_
 
 ## Verification
 
-Six Python tests passed. The healthy fixture returned `healthy`; the incident returned `page`. promtool parsed both rules and checked that checkout triggered both alerts while healthy catalog triggered neither.
+Six Python tests passed. The healthy fixture returned `healthy`; the incident returned `page`. promtool parsed both rules and checked that checkout triggered both alerts while healthy catalog triggered neither. The local Alertmanager 0.35.0 drill delivered the checkout page and catalog ticket to separate webhooks and confirmed inhibition of the checkout ticket.
 
 ## Operating limits
 

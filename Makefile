@@ -10,3 +10,9 @@ PROMTOOL ?= promtool
 verify-rules:
 	$(PROMTOOL) check rules deploy/prometheus/rules.yml
 	$(PROMTOOL) test rules deploy/prometheus/rules.test.yml
+
+ALERTMANAGER ?= alertmanager
+
+.PHONY: verify-routing
+verify-routing:
+	$(PYTHON) -B scripts/verify_alertmanager.py --alertmanager "$(ALERTMANAGER)"
